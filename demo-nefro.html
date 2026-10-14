@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NefroApp — Demo Interactivo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0E2B35;
+    --teal: #3A9EAF;
+    --teal-dk: #1D6A78;
+    --teal-lt: #C8EBF0;
+    --green: #2ECC71;
+    --amber: #F39C12;
+    --red: #E74C3C;
+    --purple: #9B59B6;
+    --bg: #0a1f27;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: #e8f4f7;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+  }
+
+  /* HEADER */
+  .demo-header {
+    width: 100%;
+    background: var(--navy);
+    border-bottom: 2px solid var(--teal);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .demo-header .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .app-badge {
+    background: linear-gradient(135deg, var(--teal-dk), var(--teal));
+    border-radius: 10px;
+    padding: 6px 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    color: #fff;
+  }
+  .demo-label {
+    font-size: 0.75rem;
+    color: var(--teal-lt);
+    background: rgba(58,158,175,0.15);
+    border: 1px solid var(--teal);
+    border-radius: 20px;
+    padding: 3px 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .screen-counter {
+    font-size: 0.8rem;
+    color: #7db8c4;
+  }
+
+  /* SCREEN LABEL */
+  .screen-title-bar {
+    width: 100%;
+    max-width: 520px;
+    padding: 14px 24px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sector-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: var(--teal-dk);
+    color: var(--teal-lt);
+  }
+  .screen-name {
+    font-size: 0.85rem;
+    color: #7db8c4;
+  }
+
+  /* PHONE FRAME */
+  .phone-wrap {
+    width: 100%;
+    max-width: 520px;
+    padding: 16px 16px 0;
+    flex: 1;
+  }
+  .phone {
+    background: #0d2530;
+    border-radius: 20px;
+    border: 1px solid rgba(58,158,175,0.3);
+    overflow: hidden;
+    min-height: 520px;
+    position: relative;
+  }
+
+  /* SCREENS */
+  .screen {
+    display: none;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+  }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* SECTION HEADINGS */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--teal-lt);
+  }
+  .time-badge {
+    font-size: 0.72rem;
+    color: #7db8c4;
+    background: rgba(58,158,175,0.1);
+    border: 1px solid rgba(58,158,175,0.3);
+    border-radius: 8px;
+    padding: 2px 8px;
+  }
+
+  /* PATIENT CARD (Secretary screen) */
+  .patient-form {
+    background: rgba(14,43,53,0.8);
+    border: 1px solid rgba(58,158,175,0.25);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .form-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(58,158,175,0.1);
+  }
+  .form-row:last-child { border-bottom: none; }
+  .form-label { font-size: 0.72rem; color: #7db8c4; text-transform: uppercase; letter-spacing: 1px; }
+  .form-value { font-size: 0.88rem; font-weight: 600; color: #e8f4f7; }
+  .form-value.highlight { color: var(--teal); }
+
+  .status-pill {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pill-amber { background: rgba(243,156,18,0.2); color: var(--amber); border: 1px solid var(--amber); }
+  .pill-green { background: rgba(46,204,113,0.2); color: var(--green); border: 1px solid var(--green); }
+  .pill-teal { background: rgba(58,158,175,0.2); color: var(--teal); border: 1px solid var(--teal); }
+  .pill-purple { background: rgba(155,89,182,0.2); color: var(--purple); border: 1px solid var(--purple); }
+  .pill-red { background: rgba(231,76,60,0.2); color: var(--red); border: 1px solid var(--red); }
+
+  .action-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    margin-top: 4px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--teal-dk), var(--teal));
+    color: #fff;
+  }
+  .btn-secondary {
+    background: rgba(58,158,175,0.1);
+    color: var(--teal);
+    border: 1px solid var(--teal);
+    margin-top: 8px;
+  }
+
+  /* WAITING ROOM */
+  .queue-list { display: flex; flex-direction: column; gap: 10px; }
+  .queue-item {
+    background: rgba(14,43,53,0.8);
+    border: 1px solid rgba(58,158,175,0.2);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .queue-item.active-patient {
+    border-color: var(--teal);
+    background: rgba(58,158,175,0.08);
+  }
+  .queue-number {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .q-active { background: var(--teal); color: #fff; }
+  .q-waiting { background: rgba(58,158,175,0.15); color: #7db8c4; }
+  .queue-info { flex: 1; }
+  .queue-name { font-size: 0.88rem; font-weight: 600; margin-bottom: 2px; }
+  .queue-meta { font-size: 0.72rem; color: #7db8c4; }
+
+  /* NOTIFICATION BANNER */
+  .notif-banner {
+    background: linear-gradient(135deg, rgba(58,158,175,0.15), rgba(29,106,120,0.1));
+    border: 1px solid var(--teal);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .notif-icon {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--teal-dk);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .notif-text { flex: 1; }
+  .notif-title { font-size: 0.82rem; font-weight: 700; color: var(--teal-lt); margin-bottom: 3px; }
+  .notif-body { font-size: 0.78rem; color: #9cc9d4; line-height: 1.4; }
+  .notif-time { font-size: 0.68rem; color: #7db8c4; margin-top: 4px; }
+
+  /* SECTOR BROADCAST */
+  .sector-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .sector-card {
+    background: rgba(14,43,53,0.8);
+    border: 1px solid rgba(58,158,175,0.2);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+  }
+  .sector-card.notified {
+    border-color: var(--green);
+    background: rgba(46,204,113,0.06);
+  }
+  .sector-card.pending {
+    border-color: rgba(243,156,18,0.4);
+    background: rgba(243,156,18,0.04);
+  }
+  .sector-icon { font-size: 1.4rem; margin-bottom: 6px; }
+  .sector-label { font-size: 0.72rem; font-weight: 600; color: #9cc9d4; margin-bottom: 4px; }
+  .sector-status { font-size: 0.68rem; }
+  .sector-status.ok { color: var(--green); }
+  .sector-status.wait { color: var(--amber); }
+
+  /* DIALYSIS SESSION */
+  .session-header {
+    background: linear-gradient(135deg, var(--teal-dk), rgba(14,43,53,0.9));
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .session-patient { font-size: 0.95rem; font-weight: 700; }
+  .session-sub { font-size: 0.72rem; color: var(--teal-lt); margin-top: 2px; }
+  .session-timer {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--teal);
+  }
+  .timer-label { font-size: 0.65rem; color: #7db8c4; text-align: right; }
+
+  .params-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .param-card {
+    background: rgba(14,43,53,0.8);
+    border: 1px solid rgba(58,158,175,0.2);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+  }
+  .param-card.alert-card { border-color: rgba(46,204,113,0.4); }
+  .param-value {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--teal);
+    margin-bottom: 2px;
+  }
+  .param-value.green { color: var(--green); }
+  .param-unit { font-size: 0.62rem; color: #7db8c4; }
+  .param-label { font-size: 0.72rem; color: #9cc9d4; margin-top: 4px; }
+
+  /* FLOW TRACKER */
+  .flow-tracker {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 14px;
+  }
+  .flow-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .flow-line-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .flow-dot {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.55rem;
+    margin-top: 2px;
+  }
+  .dot-done { background: var(--green); }
+  .dot-active { background: var(--teal); box-shadow: 0 0 8px var(--teal); }
+  .dot-pending { background: rgba(58,158,175,0.2); border: 1px solid rgba(58,158,175,0.3); }
+  .flow-connector {
+    width: 2px;
+    height: 28px;
+    background: rgba(58,158,175,0.2);
+    margin: 2px 0;
+  }
+  .flow-connector.done { background: var(--green); }
+  .flow-content { flex: 1; padding-bottom: 16px; }
+  .flow-title { font-size: 0.82rem; font-weight: 600; margin-bottom: 2px; }
+  .flow-title.done-text { color: var(--green); }
+  .flow-title.active-text { color: var(--teal-lt); }
+  .flow-title.pending-text { color: #7db8c4; }
+  .flow-detail { font-size: 0.72rem; color: #7db8c4; }
+  .flow-time { font-size: 0.68rem; color: #5a8a98; margin-top: 2px; }
+
+  /* NAV */
+  .nav-wrap {
+    width: 100%;
+    max-width: 520px;
+    padding: 16px;
+    background: var(--bg);
+    position: sticky;
+    bottom: 0;
+  }
+  .dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(58,158,175,0.2);
+    border: 1px solid rgba(58,158,175,0.3);
+    transition: all 0.3s;
+  }
+  .dot.active { background: var(--teal); border-color: var(--teal); width: 22px; border-radius: 4px; }
+
+  .nav-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .nav-btn {
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .nav-prev {
+    background: rgba(58,158,175,0.1);
+    color: var(--teal);
+    border: 1px solid rgba(58,158,175,0.3);
+  }
+  .nav-next {
+    background: linear-gradient(135deg, var(--teal-dk), var(--teal));
+    color: #fff;
+  }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .nav-btn:not(:disabled):hover { transform: translateY(-1px); }
+
+  /* SCREEN 5 — live link */
+  .live-link-block {
+    background: linear-gradient(135deg, rgba(58,158,175,0.15), rgba(29,106,120,0.08));
+    border: 1px solid var(--teal);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+  }
+  .live-link-block .icon { font-size: 2rem; margin-bottom: 10px; }
+  .live-link-block h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--teal-lt);
+  }
+  .live-link-block p { font-size: 0.78rem; color: #7db8c4; margin-bottom: 16px; line-height: 1.5; }
+  .live-link-block a {
+    display: inline-block;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, var(--teal-dk), var(--teal));
+    color: #fff;
+    text-decoration: none;
+    border-radius: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+  }
+
+  /* pulse animation for active dot */
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .pulse-dot { animation: pulse 1.5s infinite; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="demo-header">
+  <div class="logo-area">
+    <div class="app-badge">NefroApp</div>
+    <span class="demo-label">Demo</span>
+  </div>
+  <span class="screen-counter" id="screenCounter">1 / 6</span>
+</div>
+
+<!-- SCREEN LABEL -->
+<div class="screen-title-bar">
+  <span class="sector-badge" id="sectorBadge">Secretaría</span>
+  <span class="screen-name" id="screenName">Registro de paciente</span>
+</div>
+
+<!-- PHONE -->
+<div class="phone-wrap">
+  <div class="phone">
+
+    <!-- SCREEN 1: Secretaría — Registro -->
+    <div class="screen active" id="screen-1">
+      <div class="section-header">
+        <span class="section-title">👩‍💼 Registro de ingreso</span>
+        <span class="time-badge">07:45</span>
+      </div>
+
+      <div class="patient-form">
+        <div class="form-row">
+          <span class="form-label">Paciente</span>
+          <span class="form-value highlight">Ramírez, Claudia</span>
+        </div>
+        <div class="form-row">
+          <span class="form-label">DNI</span>
+          <span class="form-value">28.451.782</span>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Sesión N°</span>
+          <span class="form-value">142</span>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Turno</span>
+          <span class="form-value">07:30 — Turno A</span>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Silla asignada</span>
+          <span class="form-value highlight">Silla 04 — Sala B</span>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Médico tratante</span>
+          <span class="form-value">Dr. Fernández</span>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Estado</span>
+          <span class="status-pill pill-amber">En espera</span>
+        </div>
+      </div>
+
+      <button class="action-btn btn-primary">✓ Confirmar ingreso</button>
+      <button class="action-btn btn-secondary">📋 Ver historial</button>
+    </div>
+
+    <!-- SCREEN 2: Sala de Espera — Display -->
+    <div class="screen" id="screen-2">
+      <div class="section-header">
+        <span class="section-title">🖥️ Sala de espera</span>
+        <span class="time-badge">07:48</span>
+      </div>
+
+      <div class="notif-banner">
+        <div class="notif-icon">🔔</div>
+        <div class="notif-text">
+          <div class="notif-title">Paciente registrado</div>
+          <div class="notif-body">Ramírez, Claudia — Silla 04 Sala B<br>Sala de espera notificada automáticamente</div>
+          <div class="notif-time">07:48 — Sistema NefroApp</div>
+        </div>
+      </div>
+
+      <div class="queue-list">
+        <div class="queue-item active-patient">
+          <div class="queue-number q-active">1</div>
+          <div class="queue-info">
+            <div class="queue-name">Ramírez, Claudia</div>
+            <div class="queue-meta">Silla 04 · Sala B · Ingresó 07:45</div>
+          </div>
+          <span class="status-pill pill-teal">Lista</span>
+        </div>
+        <div class="queue-item">
+          <div class="queue-number q-waiting">2</div>
+          <div class="queue-info">
+            <div class="queue-name">López, Héctor</div>
+            <div class="queue-meta">Silla 07 · Sala A · Ingresó 07:52</div>
+          </div>
+          <span class="status-pill pill-amber">Espera</span>
+        </div>
+        <div class="queue-item">
+          <div class="queue-number q-waiting">3</div>
+          <div class="queue-info">
+            <div class="queue-name">Torres, Mirta</div>
+            <div class="queue-meta">Silla 02 · Sala B · Ingresó 07:58</div>
+          </div>
+          <span class="status-pill pill-amber">Espera</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: Enfermería — Llamado al sector -->
+    <div class="screen" id="screen-3">
+      <div class="section-header">
+        <span class="section-title">🏥 Aviso al personal</span>
+        <span class="time-badge">07:52</span>
+      </div>
+
+      <div class="notif-banner" style="border-color: var(--purple); background: rgba(155,89,182,0.08);">
+        <div class="notif-icon" style="background: var(--purple);">📲</div>
+        <div class="notif-text">
+          <div class="notif-title" style="color: #d7aaee;">Paciente convocada</div>
+          <div class="notif-body">Ramírez, Claudia — avance a Silla 04<br>Enfermería y técnico notificados</div>
+          <div class="notif-time">07:52 — Automático por NefroApp</div>
+        </div>
+      </div>
+
+      <div class="sector-grid">
+        <div class="sector-card notified">
+          <div class="sector-icon">💉</div>
+          <div class="sector-label">Enfermería</div>
+          <div class="sector-status ok">✓ Notificado</div>
+        </div>
+        <div class="sector-card notified">
+          <div class="sector-icon">⚙️</div>
+          <div class="sector-label">Técnico</div>
+          <div class="sector-status ok">✓ Notificado</div>
+        </div>
+        <div class="sector-card notified">
+          <div class="sector-icon">👨‍⚕️</div>
+          <div class="sector-label">Médico</div>
+          <div class="sector-status ok">✓ Notificado</div>
+        </div>
+        <div class="sector-card notified">
+          <div class="sector-icon">🖥️</div>
+          <div class="sector-label">Sala B — Silla 04</div>
+          <div class="sector-status ok">✓ Preparada</div>
+        </div>
+      </div>
+
+      <div class="patient-form">
+        <div class="form-row">
+          <span class="form-label">Paciente convocada</span>
+          <span class="form-value highlight">Ramírez, Claudia</span>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Destino</span>
+          <span class="form-value">Silla 04 — Sala B</span>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Estado</span>
+          <span class="status-pill pill-purple">En tránsito</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 4: Silla — Vista del técnico/enfermero -->
+    <div class="screen" id="screen-4">
+      <div class="section-header">
+        <span class="section-title">🪑 Silla 04 — Sala B</span>
+        <span class="time-badge">08:01</span>
+      </div>
+
+      <div class="session-header">
+        <div>
+          <div class="session-patient">Ramírez, Claudia</div>
+          <div class="session-sub">Sesión 142 · Dr. Fernández · Sesión 3.5 hs</div>
+        </div>
+        <div style="text-align:right">
+          <div class="session-timer">00:00</div>
+          <div class="timer-label">Inicio en espera</div>
+        </div>
+      </div>
+
+      <div class="patient-form">
+        <div class="form-row">
+          <span class="form-label">Peso previo</span>
+          <span class="form-value">67.4 kg</span>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Ultrafiltración objetivo</span>
+          <span class="form-value highlight">2.200 ml</span>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Tipo de dializador</span>
+          <span class="form-value">Fresenius HDF FX80</span>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Acceso vascular</span>
+          <span class="form-value">Fístula AV — brazo izq.</span>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Presión arterial pre</span>
+          <span class="form-value">135/85 mmHg</span>
+        </div>
+        <div class="form-row">
+          <span class="form-label">Estado</span>
+          <span class="status-pill pill-teal">Lista para iniciar</span>
+        </div>
+      </div>
+
+      <button class="action-btn btn-primary">▶ Iniciar sesión</button>
+    </div>
+
+    <!-- SCREEN 5: Sesión activa con parámetros -->
+    <div class="screen" id="screen-5">
+      <div class="section-header">
+        <span class="section-title">💧 Sesión activa</span>
+        <span class="time-badge">08:04</span>
+      </div>
+
+      <div class="session-header">
+        <div>
+          <div class="session-patient">Ramírez, Claudia</div>
+          <div class="session-sub">Silla 04 · Sala B · Sesión 142</div>
+        </div>
+        <div style="text-align:right">
+          <div class="session-timer" id="timer">01:32</div>
+          <div class="timer-label">Tiempo activo</div>
+        </div>
+      </div>
+
+      <div class="params-grid">
+        <div class="param-card alert-card">
+          <div class="param-value green">148</div>
+          <div class="param-unit">mmHg venosa</div>
+          <div class="param-label">Presión venosa</div>
+        </div>
+        <div class="param-card">
+          <div class="param-value">320</div>
+          <div class="param-unit">ml/min</div>
+          <div class="param-label">Flujo sangre</div>
+        </div>
+        <div class="param-card">
+          <div class="param-value">980</div>
+          <div class="param-unit">ml ultrafilt.</div>
+          <div class="param-label">UF acumulada</div>
+        </div>
+        <div class="param-card">
+          <div class="param-value green">98</div>
+          <div class="param-unit">%</div>
+          <div class="param-label">Saturación O₂</div>
+        </div>
+      </div>
+
+      <div class="notif-banner" style="border-color: var(--green); background: rgba(46,204,113,0.06);">
+        <div class="notif-icon" style="background: rgba(46,204,113,0.3);">📋</div>
+        <div class="notif-text">
+          <div class="notif-title" style="color: #80e6a2;">Médico y secretaría al tanto</div>
+          <div class="notif-body">Parámetros en tiempo real sincronizados. Próxima evaluación: 09:30</div>
+          <div class="notif-time">08:04 — Actualización automática</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 6: Resumen + link -->
+    <div class="screen" id="screen-6">
+      <div class="section-header">
+        <span class="section-title">✅ Flujo completado</span>
+        <span class="time-badge">08:04</span>
+      </div>
+
+      <div class="flow-tracker">
+        <div class="flow-step">
+          <div class="flow-line-wrap">
+            <div class="flow-dot dot-done">✓</div>
+            <div class="flow-connector done"></div>
+          </div>
+          <div class="flow-content">
+            <div class="flow-title done-text">Secretaría — Registro</div>
+            <div class="flow-detail">Ramírez, Claudia — Silla 04</div>
+            <div class="flow-time">07:45</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-line-wrap">
+            <div class="flow-dot dot-done">✓</div>
+            <div class="flow-connector done"></div>
+          </div>
+          <div class="flow-content">
+            <div class="flow-title done-text">Sala de espera notificada</div>
+            <div class="flow-detail">Display actualizado automáticamente</div>
+            <div class="flow-time">07:48</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-line-wrap">
+            <div class="flow-dot dot-done">✓</div>
+            <div class="flow-connector done"></div>
+          </div>
+          <div class="flow-content">
+            <div class="flow-title done-text">Personal avisado — todos los sectores</div>
+            <div class="flow-detail">Enfermería · Técnico · Médico · Silla 04</div>
+            <div class="flow-time">07:52</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-line-wrap">
+            <div class="flow-dot dot-done">✓</div>
+            <div class="flow-connector done"></div>
+          </div>
+          <div class="flow-content">
+            <div class="flow-title done-text">Paciente en silla — datos cargados</div>
+            <div class="flow-detail">Peso, UF objetivo, acceso vascular</div>
+            <div class="flow-time">08:01</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-line-wrap">
+            <div class="flow-dot dot-active pulse-dot"></div>
+          </div>
+          <div class="flow-content">
+            <div class="flow-title active-text">Sesión activa — parámetros en tiempo real</div>
+            <div class="flow-detail">Todos los sectores monitoreando</div>
+            <div class="flow-time">08:04 — en curso</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="live-link-block">
+        <div class="icon">🌐</div>
+        <h3>Probá NefroApp en vivo</h3>
+        <p>Gestión completa de sesiones de hemodiálisis para clínicas y centros nefrológicos.</p>
+        <a href="https://nefroapp-nine.vercel.app" target="_blank">Abrir NefroApp →</a>
+      </div>
+    </div>
+
+  </div><!-- .phone -->
+</div><!-- .phone-wrap -->
+
+<!-- NAV -->
+<div class="nav-wrap">
+  <div class="dots" id="dots"></div>
+  <div class="nav-buttons">
+    <button class="nav-btn nav-prev" id="prevBtn" onclick="navigate(-1)" disabled>← Anterior</button>
+    <button class="nav-btn nav-next" id="nextBtn" onclick="navigate(1)">Siguiente →</button>
+  </div>
+</div>
+
+<script>
+  const totalScreens = 6;
+  let current = 1;
+
+  const sectors = [
+    { badge: 'Secretaría', name: 'Registro de paciente' },
+    { badge: 'Sala de espera', name: 'Display y cola de turno' },
+    { badge: 'Enfermería / Técnico', name: 'Convocatoria y aviso a sectores' },
+    { badge: 'Silla 04', name: 'Pre-sesión — datos del técnico' },
+    { badge: 'Sesión activa', name: 'Parámetros en tiempo real' },
+    { badge: 'Resumen', name: 'Flujo completo — desde secretaría al paciente' },
+  ];
+
+  // Build dots
+  const dotsEl = document.getElementById('dots');
+  for (let i = 1; i <= totalScreens; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 1 ? ' active' : '');
+    d.id = 'dot-' + i;
+    dotsEl.appendChild(d);
+  }
+
+  function navigate(dir) {
+    document.getElementById('screen-' + current).classList.remove('active');
+    document.getElementById('dot-' + current).classList.remove('active');
+    current += dir;
+    document.getElementById('screen-' + current).classList.add('active');
+    document.getElementById('dot-' + current).classList.add('active');
+
+    document.getElementById('sectorBadge').textContent = sectors[current-1].badge;
+    document.getElementById('screenName').textContent = sectors[current-1].name;
+    document.getElementById('screenCounter').textContent = current + ' / ' + totalScreens;
+    document.getElementById('prevBtn').disabled = current === 1;
+    document.getElementById('nextBtn').disabled = current === totalScreens;
+    document.getElementById('nextBtn').textContent = current === totalScreens ? 'Fin del demo' : 'Siguiente →';
+  }
+
+  // Simple timer animation for screen 5
+  let secs = 92; // 1:32
+  setInterval(() => {
+    if (current === 5) {
+      secs++;
+      const m = String(Math.floor(secs / 60)).padStart(2, '0');
+      const s = String(secs % 60).padStart(2, '0');
+      document.getElementById('timer').textContent = m + ':' + s;
+    }
+  }, 1000);
+</script>
+</body>
+</html>

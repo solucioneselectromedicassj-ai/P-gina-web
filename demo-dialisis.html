@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DiálisisPRO — Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;900&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--teal:#3A9EAF;--teal-dk:#1D6A78;--teal-lt:#C8EBF0;--navy:#0E2B35;--white:#fff;--gray:#5A7078;--red:#E53E3E;--orange:#DD6B20;--green:#38A169;--bg:#F4FBFC}
+body{font-family:'Inter',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem}
+.demo-wrap{width:min(400px,96vw);background:#0A1F28;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+/* Phone chrome */
+.phone-bar{background:#061419;padding:.6rem 1.2rem;display:flex;align-items:center;justify-content:space-between;font-size:.75rem;color:rgba(255,255,255,.5)}
+.app-header{background:var(--teal-dk);padding:.9rem 1rem;display:flex;align-items:center;gap:.6rem}
+.app-header h1{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700}
+.app-header .badge{background:var(--red);color:#fff;border-radius:50%;width:20px;height:20px;font-size:.7rem;display:flex;align-items:center;justify-content:center;font-weight:700;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+
+/* SCREENS */
+.screen{display:none;padding:1rem;animation:fadeIn .35s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* screen 1 — grid máquinas */
+.machines-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:1rem}
+.machine{background:#122530;border-radius:8px;padding:.5rem .3rem;text-align:center;font-size:.7rem;border:2px solid transparent;cursor:pointer;transition:border-color .2s}
+.machine.ok{border-color:#38A169}
+.machine .dot{width:10px;height:10px;border-radius:50%;margin:0 auto .3rem}
+.machine.ok .dot{background:#38A169}
+.machine.alerta .dot{background:var(--red);animation:pulse 1s infinite}
+.machine.alerta{border-color:var(--red)}
+.machine.mant .dot{background:var(--orange)}
+.machine.mant{border-color:var(--orange)}
+.machine span{color:rgba(255,255,255,.7);display:block}
+
+/* screen 2 — alerta detail */
+.alert-card{background:#1a0a0a;border:1px solid var(--red);border-radius:12px;padding:1rem;margin-bottom:1rem}
+.alert-title{color:var(--red);font-family:'Montserrat',sans-serif;font-weight:700;font-size:1rem;margin-bottom:.3rem}
+.alert-meta{font-size:.8rem;color:rgba(255,255,255,.6);margin-bottom:.8rem}
+.alert-detail{font-size:.85rem;line-height:1.6;color:rgba(255,255,255,.85)}
+.field-row{display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:.82rem}
+.field-row .label{color:var(--gray)}
+.field-row .val{color:var(--white);font-weight:500}
+
+/* screen 3 — orden trabajo */
+.ot-header{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;margin-bottom:.75rem;color:var(--teal-lt)}
+.form-group{margin-bottom:.7rem}
+.form-label{font-size:.72rem;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem;display:block}
+.form-value{background:#122530;border-radius:8px;padding:.5rem .75rem;font-size:.85rem;color:var(--white)}
+.form-value.editable{border:1px solid var(--teal);color:var(--teal-lt)}
+.status-badge{display:inline-block;padding:.2rem .6rem;border-radius:50px;font-size:.72rem;font-weight:700}
+.status-badge.abierto{background:rgba(229,62,62,.2);color:var(--red)}
+.status-badge.proceso{background:rgba(221,107,32,.2);color:var(--orange)}
+.status-badge.cerrado{background:rgba(56,161,105,.2);color:var(--green)}
+
+/* screen 4 — reparación completada */
+.success-icon{text-align:center;font-size:3rem;margin:1rem 0 .5rem}
+.success-title{text-align:center;font-family:'Montserrat',sans-serif;font-weight:900;color:var(--green);margin-bottom:.3rem}
+.success-sub{text-align:center;font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:1.2rem}
+.repair-log{background:#122530;border-radius:10px;padding:.75rem;font-size:.82rem;line-height:1.7}
+.repair-log .log-item{display:flex;gap:.5rem;align-items:flex-start;margin-bottom:.4rem}
+.log-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:.35rem}
+
+/* screen 5 — historial */
+.hist-title{font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:var(--teal-lt);margin-bottom:.75rem}
+.hist-item{background:#122530;border-radius:8px;padding:.65rem .75rem;margin-bottom:.5rem;border-left:3px solid var(--teal)}
+.hist-item.red{border-left-color:var(--red)}
+.hist-item.orange{border-left-color:var(--orange)}
+.hist-date{font-size:.7rem;color:var(--gray);margin-bottom:.2rem}
+.hist-desc{font-size:.83rem;font-weight:500}
+.hist-tag{font-size:.7rem;color:var(--teal-lt)}
+
+/* nav */
+.demo-nav{padding:.75rem 1rem;background:#061419;display:flex;align-items:center;justify-content:space-between}
+.step-dots{display:flex;gap:.4rem}
+.step-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .3s}
+.step-dot.active{background:var(--teal)}
+.btn-next{background:var(--teal);color:#fff;border:none;border-radius:50px;padding:.5rem 1.2rem;font-family:'Montserrat',sans-serif;font-weight:700;font-size:.82rem;cursor:pointer;transition:background .2s}
+.btn-next:hover{background:var(--teal-dk)}
+.btn-back{background:transparent;color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.15);border-radius:50px;padding:.5rem 1rem;font-size:.82rem;cursor:pointer}
+.screen-label{font-size:.7rem;color:var(--gray);text-align:center;padding:.3rem 0 0;font-family:'Montserrat',sans-serif;letter-spacing:.05em}
+
+/* top banner */
+.top-banner{text-align:center;padding:1rem 0 1.5rem;color:rgba(255,255,255,.5);font-size:.8rem}
+.top-banner strong{color:var(--teal-lt);font-family:'Montserrat',sans-serif;display:block;font-size:1.1rem;margin-bottom:.2rem}
+</style>
+</head>
+<body>
+
+<div class="top-banner">
+  <strong>DiálisisPRO</strong>
+  Gestión de clínicas de hemodiálisis · Demo interactivo
+</div>
+
+<div class="demo-wrap">
+  <div class="phone-bar">
+    <span>09:42</span>
+    <span>DiálisisPRO</span>
+    <span>●●●</span>
+  </div>
+  <div class="app-header">
+    <span>💓</span>
+    <h1>DiálisisPRO</h1>
+    <span style="flex:1"></span>
+    <div class="badge">1</div>
+  </div>
+
+  <!-- SCREEN 1: Tablero máquinas -->
+  <div class="screen active" id="s1">
+    <p style="font-size:.75rem;color:var(--gray);margin-bottom:.6rem;font-family:'Montserrat',sans-serif;letter-spacing:.06em;text-transform:uppercase">Sala principal · 18 máquinas</p>
+    <div class="machines-grid">
+      <div class="machine ok"><div class="dot"></div><span>M01</span></div>
+      <div class="machine ok"><div class="dot"></div><span>M02</span></div>
+      <div class="machine ok"><div class="dot"></div><span>M03</span></div>
+      <div class="machine ok"><div class="dot"></div><span>M04</span></div>
+      <div class="machine ok"><div class="dot"></div><span>M05</span></div>
+      <div class="machine ok"><div class="dot"></div><span>M06</span></div>
+      <div class="machine alerta"><div class="dot"></div><span>M07</span></div>
+      <div class="machine ok"><div class="dot"></div><span>M08</span></div>
+      <div class="machine ok"><div class="dot"></div><span>M09</span></div>
+      <div class="machine mant"><div class="dot"></div><span>M10</span></div>
+      <div class="machine ok"><div class="dot"></div><span>M11</span></div>
+      <div class="machine ok"><div class="dot"></div><span>M12</span></div>
+      <div class="machine ok"><div class="dot"></div><span>M13</span></div>
+      <div class="machine ok"><div class="dot"></div><span>M14</span></div>
+      <div class="machine ok"><div class="dot"></div><span>M15</span></div>
+      <div class="machine ok"><div class="dot"></div><span>M16</span></div>
+      <div class="machine ok"><div class="dot"></div><span>M17</span></div>
+      <div class="machine ok"><div class="dot"></div><span>M18</span></div>
+    </div>
+    <div style="background:#1a0a0a;border-left:3px solid var(--red);border-radius:8px;padding:.65rem .75rem">
+      <div style="font-size:.72rem;color:var(--red);font-weight:700;margin-bottom:.2rem">⚠️ ALERTA ACTIVA</div>
+      <div style="font-size:.85rem">Máquina M07 — Presión venosa fuera de rango</div>
+      <div style="font-size:.72rem;color:var(--gray);margin-top:.2rem">Hoy 09:38 · Paciente: García, R.</div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: Detalle alerta -->
+  <div class="screen" id="s2">
+    <div class="alert-card">
+      <div class="alert-title">⚠️ Falla — Máquina M07</div>
+      <div class="alert-meta">Fresenius 4008S · Serie #FRE-4008-07 · Hoy 09:38</div>
+      <div class="field-row"><span class="label">Parámetro</span><span class="val">Presión venosa</span></div>
+      <div class="field-row"><span class="label">Valor detectado</span><span class="val" style="color:var(--red)">310 mmHg</span></div>
+      <div class="field-row"><span class="label">Rango normal</span><span class="val">80–250 mmHg</span></div>
+      <div class="field-row"><span class="label">Paciente en sesión</span><span class="val">García, Roberto</span></div>
+      <div class="field-row"><span class="label">Tiempo de sesión</span><span class="val">1h 22min</span></div>
+      <div class="field-row" style="border:none"><span class="label">Estado paciente</span><span class="val" style="color:var(--green)">Estable</span></div>
+    </div>
+    <div style="font-size:.82rem;color:rgba(255,255,255,.6);line-height:1.6">
+      Se notificó al técnico de guardia y al responsable médico. Sesión pausada en espera de revisión.
+    </div>
+  </div>
+
+  <!-- SCREEN 3: Orden de trabajo -->
+  <div class="screen" id="s3">
+    <div class="ot-header">📋 Nueva orden de trabajo</div>
+    <div class="form-group">
+      <span class="form-label">Equipo</span>
+      <div class="form-value">Máquina M07 — Fresenius 4008S</div>
+    </div>
+    <div class="form-group">
+      <span class="form-label">Tipo de falla</span>
+      <div class="form-value">Sensor de presión venosa</div>
+    </div>
+    <div class="form-group">
+      <span class="form-label">Prioridad</span>
+      <div class="form-value" style="color:var(--red)">🔴 Alta — sesión interrumpida</div>
+    </div>
+    <div class="form-group">
+      <span class="form-label">Técnico asignado</span>
+      <div class="form-value editable">Pablo Morales ✓</div>
+    </div>
+    <div class="form-group">
+      <span class="form-label">Diagnóstico inicial</span>
+      <div class="form-value editable" style="font-size:.78rem">Obstrucción parcial en línea venosa. Se revisó trampa de burbujas y sensor. Se reemplazó línea y se recalibró sensor de presión venosa.</div>
+    </div>
+    <div class="form-group">
+      <span class="form-label">Estado</span>
+      <span class="status-badge proceso">EN PROCESO</span>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: Reparación completada -->
+  <div class="screen" id="s4">
+    <div class="success-icon">✅</div>
+    <div class="success-title">Reparación completada</div>
+    <div class="success-sub">Máquina M07 volvió al servicio · 10:15</div>
+    <div class="repair-log">
+      <div class="log-item"><div class="log-dot"></div><div>09:38 — Alerta automática de presión venosa</div></div>
+      <div class="log-item"><div class="log-dot"></div><div>09:40 — Técnico Pablo Morales recibe notificación</div></div>
+      <div class="log-item"><div class="log-dot"></div><div>09:45 — Se abre orden de trabajo OT-2025-089</div></div>
+      <div class="log-item"><div class="log-dot"></div><div>09:52 — Reemplazo de línea venosa e inspección</div></div>
+      <div class="log-item"><div class="log-dot"></div><div>10:08 — Recalibración de sensor de presión</div></div>
+      <div class="log-item"><div class="log-dot" style="background:var(--green)"></div><div style="color:var(--green);font-weight:500">10:15 — Máquina habilitada. OT cerrada.</div></div>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: Historial -->
+  <div class="screen" id="s5">
+    <div class="hist-title">📁 Historial M07 — Fresenius 4008S</div>
+    <div class="hist-item red">
+      <div class="hist-date">Hoy 09:38 · OT-2025-089</div>
+      <div class="hist-desc">Falla presión venosa — reemplazo línea + sensor</div>
+      <div class="hist-tag">Duración: 37 min · <span style="color:var(--green)">Cerrada ✓</span></div>
+    </div>
+    <div class="hist-item orange">
+      <div class="hist-date">12/09/2025 · OT-2025-071</div>
+      <div class="hist-desc">Mantenimiento preventivo programado</div>
+      <div class="hist-tag">Duración: 2h · <span style="color:var(--green)">Cerrada ✓</span></div>
+    </div>
+    <div class="hist-item">
+      <div class="hist-date">28/08/2025 · OT-2025-055</div>
+      <div class="hist-desc">Calibración anual — verificación seguridad eléctrica</div>
+      <div class="hist-tag">Duración: 45 min · <span style="color:var(--green)">Cerrada ✓</span></div>
+    </div>
+    <div class="hist-item orange">
+      <div class="hist-date">14/07/2025 · OT-2025-038</div>
+      <div class="hist-desc">Alarma de conductividad — reposición filtro</div>
+      <div class="hist-tag">Duración: 20 min · <span style="color:var(--green)">Cerrada ✓</span></div>
+    </div>
+    <div style="text-align:center;margin-top:.75rem">
+      <a href="https://dialisis-pro.vercel.app" target="_blank" style="color:var(--teal-lt);font-size:.82rem;font-weight:600;text-decoration:none">Ver app completa →</a>
+    </div>
+  </div>
+
+  <div class="screen-label" id="screen-label">Tablero principal</div>
+
+  <div class="demo-nav">
+    <button class="btn-back" id="btn-back" onclick="goBack()" style="visibility:hidden">← Atrás</button>
+    <div class="step-dots">
+      <div class="step-dot active" id="d1"></div>
+      <div class="step-dot" id="d2"></div>
+      <div class="step-dot" id="d3"></div>
+      <div class="step-dot" id="d4"></div>
+      <div class="step-dot" id="d5"></div>
+    </div>
+    <button class="btn-next" id="btn-next" onclick="goNext()">Siguiente →</button>
+  </div>
+</div>
+
+<script>
+const screens = ['s1','s2','s3','s4','s5'];
+const labels = ['Tablero principal','Detalle de alerta','Orden de trabajo','Reparación completada','Historial del equipo'];
+let cur = 0;
+
+function show(n) {
+  screens.forEach((s,i) => {
+    document.getElementById(s).classList.toggle('active', i === n);
+    document.getElementById('d'+(i+1)).classList.toggle('active', i === n);
+  });
+  document.getElementById('screen-label').textContent = labels[n];
+  document.getElementById('btn-back').style.visibility = n === 0 ? 'hidden' : 'visible';
+  const nb = document.getElementById('btn-next');
+  if (n === screens.length - 1) {
+    nb.textContent = 'Ver app →';
+    nb.onclick = () => window.open('https://dialisis-pro.vercel.app','_blank');
+  } else {
+    nb.textContent = 'Siguiente →';
+    nb.onclick = goNext;
+  }
+}
+function goNext() { if (cur < screens.length-1) { cur++; show(cur); } }
+function goBack() { if (cur > 0) { cur--; show(cur); } }
+</script>
+</body>
+</html>

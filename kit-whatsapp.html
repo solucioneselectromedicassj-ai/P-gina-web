@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEM — Kit WhatsApp</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0E2B35;
+    --teal: #3A9EAF;
+    --teal-dk: #1D6A78;
+    --teal-lt: #C8EBF0;
+    --bg: #081920;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: #111;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 8px 100px;
+    gap: 12px;
+    min-height: 100vh;
+  }
+
+  .top-bar {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    color: #666;
+    font-size: 0.75rem;
+    padding: 8px 0 4px;
+    line-height: 1.6;
+  }
+  .top-bar strong { color: #aaa; }
+
+  /* CARD — square 400×400 (screenshottable) */
+  .card {
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1 / 1;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 28px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    flex-shrink: 0;
+  }
+
+  .card-num {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.3);
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  /* ── CARD 1: PORTADA ── */
+  .c1 {
+    background: linear-gradient(145deg, #0E2B35 0%, #0a1f27 50%, #071519 100%);
+    border: 1px solid rgba(58,158,175,0.3);
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0;
+  }
+  .c1-logo {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--teal-dk), var(--teal));
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+    box-shadow: 0 0 40px rgba(58,158,175,0.4);
+  }
+  .c1-logo svg { width: 70px; height: 44px; }
+  .c1 h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 1.15rem;
+    color: #fff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+  .c1 .tagline {
+    font-size: 0.78rem;
+    color: var(--teal-lt);
+    letter-spacing: 1px;
+    opacity: 0.85;
+  }
+  .c1 .location {
+    margin-top: 18px;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.35);
+    display: flex; align-items: center; gap: 5px;
+    justify-content: center;
+  }
+
+  /* ECG line decoration */
+  .ecg-line {
+    width: 100%;
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    opacity: 0.12;
+  }
+
+  /* ── CARD 2: SERVICIOS ── */
+  .c2 {
+    background: linear-gradient(145deg, #0a1f27, #0E2B35);
+    border: 1px solid rgba(58,158,175,0.25);
+  }
+  .card-header {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .card-eyebrow {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--teal);
+  }
+  .card-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .services-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    flex: 1;
+    margin: 16px 0;
+  }
+  .srv {
+    background: rgba(58,158,175,0.08);
+    border: 1px solid rgba(58,158,175,0.2);
+    border-radius: 10px;
+    padding: 10px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .srv-icon { font-size: 1rem; flex-shrink: 0; }
+  .srv-text { font-size: 0.72rem; color: #c8e8f0; line-height: 1.3; }
+  .card-footer {
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.3);
+    text-align: right;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── APP CARDS (3-6) ── */
+  .app-card {
+    border: 1px solid rgba(58,158,175,0.25);
+    justify-content: flex-start;
+    gap: 0;
+  }
+  .app-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .app-badge-wrap { display: flex; flex-direction: column; gap: 6px; }
+  .app-badge {
+    display: inline-block;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    color: #fff;
+  }
+  .badge-dialisis { background: linear-gradient(135deg, #1D6A78, #3A9EAF); }
+  .badge-nefro { background: linear-gradient(135deg, #1a4f7a, #2980b9); }
+  .badge-apptus { background: linear-gradient(135deg, #5a1d78, #9b59b6); }
+  .badge-semtools { background: linear-gradient(135deg, #1a6a3a, #27ae60); }
+
+  .app-type {
+    font-size: 0.62rem;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+  .app-screen-mock {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    flex: 1;
+  }
+  .mock-header {
+    padding: 7px 12px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .mock-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .mock-body {
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .mock-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .mock-label { font-size: 0.62rem; color: rgba(255,255,255,0.4); }
+  .mock-value { font-size: 0.72rem; font-weight: 600; }
+  .mock-bar-wrap {
+    background: rgba(255,255,255,0.08);
+    border-radius: 4px;
+    height: 6px;
+    overflow: hidden;
+    margin-top: 2px;
+  }
+  .mock-bar { height: 100%; border-radius: 4px; }
+
+  .app-desc {
+    font-size: 0.73rem;
+    color: #9cc9d4;
+    line-height: 1.5;
+    margin: 12px 0 10px;
+    flex: 1;
+  }
+  .app-link-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .app-url {
+    font-size: 0.65rem;
+    color: var(--teal);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .app-arrow {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.3);
+  }
+
+  /* ── CARD 7: CONTACTO ── */
+  .c7 {
+    background: linear-gradient(145deg, #0E2B35, #071519);
+    border: 1px solid rgba(58,158,175,0.3);
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .c7 h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #fff;
+    margin-bottom: 20px;
+    line-height: 1.3;
+  }
+  .contact-items {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    width: 100%;
+    max-width: 280px;
+  }
+  .contact-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(58,158,175,0.08);
+    border: 1px solid rgba(58,158,175,0.2);
+    border-radius: 12px;
+    padding: 10px 14px;
+    text-align: left;
+  }
+  .contact-icon { font-size: 1.1rem; flex-shrink: 0; }
+  .contact-info { flex: 1; }
+  .contact-label { font-size: 0.62rem; color: #7db8c4; text-transform: uppercase; letter-spacing: 1px; }
+  .contact-value { font-size: 0.78rem; color: #e8f4f7; font-weight: 600; margin-top: 1px; }
+  .c7-footer {
+    margin-top: 18px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--teal);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* Divider between cards */
+  .divider {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    font-size: 0.65rem;
+    color: #333;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 0;
+  }
+
+  /* Bottom hint */
+  .bottom-hint {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(10,25,32,0.95);
+    border-top: 1px solid rgba(58,158,175,0.2);
+    padding: 10px 16px;
+    text-align: center;
+    font-size: 0.72rem;
+    color: #7db8c4;
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <strong>Kit de imágenes para WhatsApp</strong><br>
+  Capturá cada tarjeta con captura de pantalla y enviala como imagen
+</div>
+
+<!-- CARD 1: PORTADA -->
+<div class="card c1">
+  <span class="card-num">1 / 7</span>
+  <div class="c1-logo">
+    <svg viewBox="0 0 70 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polyline points="0,22 10,22 14,10 18,34 23,8 28,36 33,20 37,20 40,14 43,30 46,22 70,22"
+        stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+  </div>
+  <h1>Soluciones<br>Electromédicas SJ</h1>
+  <p class="tagline">Servicio técnico en equipamiento médico</p>
+  <p class="location">📍 Pocito · San Juan · Argentina</p>
+</div>
+
+<div class="divider">▼</div>
+
+<!-- CARD 2: SERVICIOS -->
+<div class="card c2">
+  <span class="card-num">2 / 7</span>
+  <div class="card-header">
+    <span class="card-eyebrow">Lo que hacemos</span>
+    <h2 class="card-title">Servicios técnicos<br>biomédicos</h2>
+  </div>
+  <div class="services-list">
+    <div class="srv"><span class="srv-icon">🔧</span><span class="srv-text">Mantenimiento preventivo y correctivo</span></div>
+    <div class="srv"><span class="srv-icon">📏</span><span class="srv-text">Calibración y verificación</span></div>
+    <div class="srv"><span class="srv-icon">📋</span><span class="srv-text">Habilitación y documentación</span></div>
+    <div class="srv"><span class="srv-icon">💉</span><span class="srv-text">Bombas de infusión</span></div>
+    <div class="srv"><span class="srv-icon">❤️</span><span class="srv-text">Monitores y desfibriladores</span></div>
+    <div class="srv"><span class="srv-icon">🩺</span><span class="srv-text">Equipos de hemodiálisis</span></div>
+    <div class="srv"><span class="srv-icon">🏥</span><span class="srv-text">Hospitales · Clínicas · Consultorios</span></div>
+    <div class="srv"><span class="srv-icon">📊</span><span class="srv-text">Auditorías y organismos de control</span></div>
+  </div>
+  <div class="card-footer">semelectromedica.com.ar</div>
+</div>
+
+<div class="divider">▼</div>
+
+<!-- CARD 3: DiálisisPRO -->
+<div class="card app-card" style="background: linear-gradient(145deg, #071a20, #0E2B35);">
+  <span class="card-num">3 / 7</span>
+  <div class="app-top">
+    <div class="app-badge-wrap">
+      <span class="app-badge badge-dialisis">DiálisisPRO</span>
+      <span class="app-type">Gestión de clínicas de hemodiálisis</span>
+    </div>
+  </div>
+  <div class="app-screen-mock">
+    <div class="mock-header" style="background: rgba(58,158,175,0.15); color: #3A9EAF;">
+      <div class="mock-dot" style="background:#2ECC71"></div>
+      Panel de máquinas — Sala A
+    </div>
+    <div class="mock-body" style="background: rgba(10,25,32,0.8);">
+      <div class="mock-row">
+        <span class="mock-label">M03 — García R.</span>
+        <span class="mock-value" style="color:#2ECC71">● Normal</span>
+      </div>
+      <div class="mock-bar-wrap"><div class="mock-bar" style="width:65%; background:#2ECC71"></div></div>
+      <div class="mock-row" style="margin-top:4px">
+        <span class="mock-label">M07 — López H.</span>
+        <span class="mock-value" style="color:#E74C3C">⚠ Alerta</span>
+      </div>
+      <div class="mock-bar-wrap"><div class="mock-bar" style="width:90%; background:#E74C3C"></div></div>
+      <div class="mock-row" style="margin-top:4px">
+        <span class="mock-label">M11 — Torres M.</span>
+        <span class="mock-value" style="color:#2ECC71">● Normal</span>
+      </div>
+      <div class="mock-bar-wrap"><div class="mock-bar" style="width:50%; background:#2ECC71"></div></div>
+    </div>
+  </div>
+  <p class="app-desc">Sesiones, parámetros clínicos, alertas, planta de agua, bidones y stock. Multi-clínica, multi-rol.</p>
+  <div class="app-link-row">
+    <span class="app-url">dialisis-pro.vercel.app</span>
+    <span class="app-arrow">Ver demo →</span>
+  </div>
+</div>
+
+<div class="divider">▼</div>
+
+<!-- CARD 4: NefroApp -->
+<div class="card app-card" style="background: linear-gradient(145deg, #071520, #0e2035);">
+  <span class="card-num">4 / 7</span>
+  <div class="app-top">
+    <div class="app-badge-wrap">
+      <span class="app-badge badge-nefro">NefroApp</span>
+      <span class="app-type">Flujo completo paciente nefrológico</span>
+    </div>
+  </div>
+  <div class="app-screen-mock">
+    <div class="mock-header" style="background: rgba(41,128,185,0.15); color: #2980b9;">
+      <div class="mock-dot" style="background:#2980b9"></div>
+      Flujo de sesión — 07:45
+    </div>
+    <div class="mock-body" style="background: rgba(10,15,30,0.8); gap:8px">
+      <div class="mock-row">
+        <span style="font-size:0.65rem; color:rgba(255,255,255,0.5)">Secretaría</span>
+        <span style="font-size:0.65rem; color:#2ECC71; font-weight:700">✓ Registrado</span>
+      </div>
+      <div class="mock-row">
+        <span style="font-size:0.65rem; color:rgba(255,255,255,0.5)">Sala de espera</span>
+        <span style="font-size:0.65rem; color:#2ECC71; font-weight:700">✓ Notificado</span>
+      </div>
+      <div class="mock-row">
+        <span style="font-size:0.65rem; color:rgba(255,255,255,0.5)">Enfermería</span>
+        <span style="font-size:0.65rem; color:#2ECC71; font-weight:700">✓ Avisada</span>
+      </div>
+      <div class="mock-row">
+        <span style="font-size:0.65rem; color:rgba(255,255,255,0.5)">Silla 04</span>
+        <span style="font-size:0.65rem; color:#3A9EAF; font-weight:700">● Sesión activa</span>
+      </div>
+    </div>
+  </div>
+  <p class="app-desc">Desde el registro en secretaría hasta la sesión activa. Cada sector recibe aviso automático en tiempo real.</p>
+  <div class="app-link-row">
+    <span class="app-url">nefroapp-nine.vercel.app</span>
+    <span class="app-arrow">Ver demo →</span>
+  </div>
+</div>
+
+<div class="divider">▼</div>
+
+<!-- CARD 5: Apptus -->
+<div class="card app-card" style="background: linear-gradient(145deg, #120720, #1a0e2b);">
+  <span class="card-num">5 / 7</span>
+  <div class="app-top">
+    <div class="app-badge-wrap">
+      <span class="app-badge badge-apptus">Apptus</span>
+      <span class="app-type">Gestión operativa de equipamiento</span>
+    </div>
+  </div>
+  <div class="app-screen-mock">
+    <div class="mock-header" style="background: rgba(155,89,182,0.15); color: #9b59b6;">
+      <div class="mock-dot" style="background:#9b59b6"></div>
+      Cola de turnos — Consultorio 2
+    </div>
+    <div class="mock-body" style="background: rgba(15,8,25,0.8); gap:7px">
+      <div class="mock-row">
+        <span style="font-size:0.65rem; color:#9b59b6; font-weight:700">OT-2025-091</span>
+        <span style="font-size:0.65rem; color:#F39C12">⚙ En proceso</span>
+      </div>
+      <div class="mock-row">
+        <span style="font-size:0.65rem; color:rgba(255,255,255,0.4)">Equipo</span>
+        <span style="font-size:0.65rem; color:#c9d1d9">Monitor multiparamétrico</span>
+      </div>
+      <div class="mock-row">
+        <span style="font-size:0.65rem; color:rgba(255,255,255,0.4)">Técnico</span>
+        <span style="font-size:0.65rem; color:#c9d1d9">P. Morales</span>
+      </div>
+      <div style="margin-top:4px; text-align:center; font-size:0.6rem; color:rgba(155,89,182,0.7); padding: 4px; border: 1px solid rgba(155,89,182,0.2); border-radius:6px">
+        📋 Historial completo por equipo
+      </div>
+    </div>
+  </div>
+  <p class="app-desc">Seguimiento operativo del equipamiento médico: órdenes de servicio, historial de intervenciones y estado de cada equipo.</p>
+  <div class="app-link-row">
+    <span class="app-url">apptus-nine.vercel.app</span>
+    <span class="app-arrow">Ver demo →</span>
+  </div>
+</div>
+
+<div class="divider">▼</div>
+
+<!-- CARD 6: SEM Tools -->
+<div class="card app-card" style="background: linear-gradient(145deg, #071a0e, #0e2b18);">
+  <span class="card-num">6 / 7</span>
+  <div class="app-top">
+    <div class="app-badge-wrap">
+      <span class="app-badge badge-semtools">SEM Tools</span>
+      <span class="app-type">Herramienta técnica de taller</span>
+    </div>
+  </div>
+  <div class="app-screen-mock">
+    <div class="mock-header" style="background: rgba(39,174,96,0.15); color: #27ae60;">
+      <div class="mock-dot" style="background:#27ae60"></div>
+      Panel de herramientas
+    </div>
+    <div class="mock-body" style="background: rgba(8,18,10,0.8); gap:6px">
+      <div class="mock-row">
+        <span style="font-size:0.65rem; color:#27ae60">⚡</span>
+        <span style="font-size:0.65rem; color:#cde; flex:1; margin-left:6px">Calculadora eléctrica IEC</span>
+        <span style="font-size:0.6rem; color:#27ae60">→</span>
+      </div>
+      <div class="mock-row">
+        <span style="font-size:0.65rem; color:#27ae60">📐</span>
+        <span style="font-size:0.65rem; color:#cde; flex:1; margin-left:6px">Conversor de unidades</span>
+        <span style="font-size:0.6rem; color:#27ae60">→</span>
+      </div>
+      <div class="mock-row">
+        <span style="font-size:0.65rem; color:#27ae60">📋</span>
+        <span style="font-size:0.65rem; color:#cde; flex:1; margin-left:6px">Órdenes de trabajo</span>
+        <span style="font-size:0.6rem; color:#27ae60">→</span>
+      </div>
+      <div class="mock-row">
+        <span style="font-size:0.65rem; color:#27ae60">🔍</span>
+        <span style="font-size:0.65rem; color:#cde; flex:1; margin-left:6px">Diagnóstico de fallas</span>
+        <span style="font-size:0.6rem; color:#27ae60">→</span>
+      </div>
+    </div>
+  </div>
+  <p class="app-desc">Módulos para técnicos biomédicos: cálculos, conversiones, órdenes de trabajo y diagnóstico de equipos.</p>
+  <div class="app-link-row">
+    <span class="app-url">semtools-nu.vercel.app</span>
+    <span class="app-arrow">Descargar →</span>
+  </div>
+</div>
+
+<div class="divider">▼</div>
+
+<!-- CARD 7: CONTACTO -->
+<div class="card c7">
+  <span class="card-num">7 / 7</span>
+  <h2>¿Necesitás mantenimiento<br>o una solución de software?</h2>
+  <div class="contact-items">
+    <div class="contact-row">
+      <span class="contact-icon">📱</span>
+      <div class="contact-info">
+        <div class="contact-label">WhatsApp</div>
+        <div class="contact-value">+54 9 264 XXX-XXXX</div>
+      </div>
+    </div>
+    <div class="contact-row">
+      <span class="contact-icon">📧</span>
+      <div class="contact-info">
+        <div class="contact-label">Email</div>
+        <div class="contact-value">pablomoralesrub11@gmail.com</div>
+      </div>
+    </div>
+    <div class="contact-row">
+      <span class="contact-icon">📍</span>
+      <div class="contact-info">
+        <div class="contact-label">Ubicación</div>
+        <div class="contact-value">Pocito · San Juan · Argentina</div>
+      </div>
+    </div>
+    <div class="contact-row">
+      <span class="contact-icon">🌐</span>
+      <div class="contact-info">
+        <div class="contact-label">Web</div>
+        <div class="contact-value">semelectromedica.com.ar</div>
+      </div>
+    </div>
+  </div>
+  <div class="c7-footer">Soluciones Electromédicas SJ</div>
+</div>
+
+<div class="bottom-hint">
+  📸 Capturá cada tarjeta con captura de pantalla del celular y compartila por WhatsApp
+</div>
+
+</body>
+</html>
