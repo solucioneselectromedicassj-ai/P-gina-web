@@ -788,7 +788,7 @@
         <div class="icon">🌐</div>
         <h3>Probá NefroApp en vivo</h3>
         <p>Gestión completa de sesiones de hemodiálisis para clínicas y centros nefrológicos.</p>
-        <a href="https://nefroapp-nine.vercel.app" target="_blank">Abrir NefroApp →</a>
+        
       </div>
     </div>
 
@@ -799,7 +799,7 @@
 <div class="nav-wrap">
   <div class="dots" id="dots"></div>
   <div class="nav-buttons">
-    <button class="nav-btn nav-prev" id="prevBtn" onclick="navigate(-1)" disabled>← Anterior</button>
+    <button class="nav-btn nav-prev" id="prevBtn" onclick="window.location.href='index.html'">← Sitio</button>
     <button class="nav-btn nav-next" id="nextBtn" onclick="navigate(1)">Siguiente →</button>
   </div>
 </div>
@@ -836,9 +836,26 @@
     document.getElementById('sectorBadge').textContent = sectors[current-1].badge;
     document.getElementById('screenName').textContent = sectors[current-1].name;
     document.getElementById('screenCounter').textContent = current + ' / ' + totalScreens;
-    document.getElementById('prevBtn').disabled = current === 1;
-    document.getElementById('nextBtn').disabled = current === totalScreens;
-    document.getElementById('nextBtn').textContent = current === totalScreens ? 'Fin del demo' : 'Siguiente →';
+    const pb = document.getElementById('prevBtn');
+    const nb = document.getElementById('nextBtn');
+    if (current === 1) {
+      pb.disabled = false;
+      pb.textContent = '← Sitio';
+      pb.onclick = () => window.location.href = 'index.html';
+    } else {
+      pb.disabled = false;
+      pb.textContent = '← Anterior';
+      pb.onclick = () => navigate(-1);
+    }
+    if (current === totalScreens) {
+      nb.disabled = false;
+      nb.textContent = '← Volver al sitio';
+      nb.onclick = () => window.location.href = 'index.html';
+    } else {
+      nb.disabled = false;
+      nb.textContent = 'Siguiente →';
+      nb.onclick = () => navigate(1);
+    }
   }
 
   // Simple timer animation for screen 5

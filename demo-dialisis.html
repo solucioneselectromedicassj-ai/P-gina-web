@@ -221,7 +221,7 @@ body{font-family:'Inter',sans-serif;background:var(--navy);color:var(--white);mi
       <div class="hist-tag">Duración: 20 min · <span style="color:var(--green)">Cerrada ✓</span></div>
     </div>
     <div style="text-align:center;margin-top:.75rem">
-      <a href="https://dialisis-pro.vercel.app" target="_blank" style="color:var(--teal-lt);font-size:.82rem;font-weight:600;text-decoration:none">Ver app completa →</a>
+      
     </div>
   </div>
 
@@ -251,11 +251,20 @@ function show(n) {
     document.getElementById('d'+(i+1)).classList.toggle('active', i === n);
   });
   document.getElementById('screen-label').textContent = labels[n];
-  document.getElementById('btn-back').style.visibility = n === 0 ? 'hidden' : 'visible';
+  const bb = document.getElementById('btn-back');
+  if (n === 0) {
+    bb.textContent = '← Sitio';
+    bb.onclick = () => window.location.href = 'index.html';
+    bb.style.visibility = 'visible';
+  } else {
+    bb.textContent = '← Atrás';
+    bb.onclick = goBack;
+    bb.style.visibility = 'visible';
+  }
   const nb = document.getElementById('btn-next');
   if (n === screens.length - 1) {
-    nb.textContent = 'Ver app →';
-    nb.onclick = () => window.open('https://dialisis-pro.vercel.app','_blank');
+    nb.textContent = '← Volver al sitio';
+    nb.onclick = () => window.location.href = 'index.html';
   } else {
     nb.textContent = 'Siguiente →';
     nb.onclick = goNext;
